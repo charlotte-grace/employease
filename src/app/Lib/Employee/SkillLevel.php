@@ -2,18 +2,14 @@
 
 namespace App\Lib\Employee;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SkillLevel extends Model
 {
-    use HasFactory;
-
+    /**
+     * @var string
+     */
     protected $table = 'skill_levels';
-
-    public const SLUG_LEVEL_BEGINNER = 'beginner';
-    public const SLUG_LEVEL_INTERMEDIATE = 'intermediate';
-    public const SLUG_LEVEL_EXPERT = 'expert';
 
     /**
      * The attributes that are mass assignable.

@@ -12,7 +12,7 @@ class EmployeeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,18 +25,39 @@ class EmployeeRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'contact_number' => 'required|string|max:255',
-            'email_address' => 'required|string|email|max:255|unique:employees,email_address,' . $this->employee,
+            'contact_number' => 'required|unique:employees,contact_number',
+            'email_address' => 'required|string|email|max:255|unique:employees,email_address',
             'date_of_birth' => 'required|date',
-            'address' => 'array',
-            'address.street_address' => 'required|string|max:255',
-            'address.city' => 'required|string|max:255',
-            'address.postal_code' => 'required|string|max:255',
-            'address.country' => 'required|string|max:255',
+            'street_address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'postal_code' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             'skills' => 'array',
-            'skills.*.employee_skill_level_id' => 'required|integer|exists:employee_skill_levels,id',
-            'skills.*.skill_name' => 'required|string|max:255',
-            'skills.*.years_experience' => 'required|integer|min:0',
+            'skills.*.skill_level' => 'sometimes|nullable|exists:skill_levels,slug',
+            'skills.*.skill_name' => 'sometimes|nullable',
+            'skills.*.years_experience' => 'sometimes|nullable',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function messages(): array
+    {
+        return [
+            'first_name.required' => 'First Name required',
+            'last_name.required' => 'Last Name required',
+            'contact_number.required' => 'Contact Number required',
+            'contact_number.unique' => 'Contact Number already exists',
+            'email_address.required' => 'Email required',
+            'email_address.email' => 'Email invalid',
+            'email_address.unique' => 'Email already already exists',
+            'date_of_birth.required' => 'Date of Birth required',
+            'date_of_birth.date' => 'Invalid date',
+            'street_address.required' => 'Street Address required',
+            'city.required' => 'City required',
+            'postal_code.required' => 'Postal Code required',
+            'country.required' => 'Country required'
         ];
     }
 }

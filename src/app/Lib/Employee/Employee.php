@@ -13,8 +13,14 @@ class Employee extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /**
+     * @var string
+     */
     protected $table = 'employees';
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'employee_uuid',
         'first_name',
@@ -28,6 +34,9 @@ class Employee extends Model
         'country',
     ];
 
+    /**
+     * @return void
+     */
     protected static function boot(): void
     {
         parent::boot();
@@ -37,6 +46,9 @@ class Employee extends Model
         });
     }
 
+    /**
+     * @return HasMany
+     */
     public function skills(): HasMany
     {
         return $this->hasMany(EmployeeSkill::class);

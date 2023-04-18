@@ -10,8 +10,14 @@ class EmployeeSkill extends Model
 {
     use HasFactory;
 
-    protected $table = '';
+    /**
+     * @var string
+     */
+    protected $table = 'employee_skills';
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'employee_id',
         'skill_level_id',
@@ -19,14 +25,19 @@ class EmployeeSkill extends Model
         'years_experience',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function level(): BelongsTo
     {
         return $this->belongsTo(SkillLevel::class, 'skill_level_id');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
-
 }
