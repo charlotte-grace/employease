@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
@@ -9,12 +10,14 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        create_vo_schema('skill_levels');
-        populate_vo_data([
-            'Beginner',
-            'Intermediate',
-            'Expert',
-        ], 'skill_levels');
+        Schema::create('skill_levels', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->unsignedInteger('order');
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
 
     }
 

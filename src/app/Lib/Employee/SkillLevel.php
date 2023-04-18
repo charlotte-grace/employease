@@ -2,10 +2,13 @@
 
 namespace App\Lib\Employee;
 
-use App\Lib\ValueObjects\ValueObject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class SkillLevel extends ValueObject
+class SkillLevel extends Model
 {
+    use HasFactory;
+
     protected $table = 'skill_levels';
 
     public const SLUG_LEVEL_BEGINNER = 'beginner';

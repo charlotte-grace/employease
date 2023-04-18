@@ -12,12 +12,15 @@ return new class () extends Migration {
     {
         Schema::create('employee_skills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('skill_level_id');
             $table->string('skill_name');
-            $table->foreignId('skill_level_id')->constrained();
-            $table->integer('years_experience');
+            $table->unsignedInteger('years_experience')->default(0);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            $table->foreign('skill_level_id')->references('id')->on('skill_levels');
         });
     }
 
