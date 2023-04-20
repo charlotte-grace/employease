@@ -14,5 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+Route::get('/employee/{id}', [\App\Http\Livewire\ReadEmployee::class, '__invoke']);
+Route::get('/employees', [\App\Http\Livewire\HomeEmployees::class, '__invoke']);
+Route::get('/employees/create', [\App\Http\Livewire\CreateEmployee::class, '__invoke']);
+Route::get('/employees/{id}/edit', [\App\Http\Livewire\EditEmployee::class, '__invoke']);
