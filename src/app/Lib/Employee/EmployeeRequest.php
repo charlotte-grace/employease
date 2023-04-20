@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Lib\Employee;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -57,7 +57,7 @@ class EmployeeRequest extends FormRequest
             'street_address.required' => 'Street Address required',
             'city.required' => 'City required',
             'postal_code.required' => 'Postal Code required',
-            'country.required' => 'Country required'
+            'country.required' => 'Country required',
         ];
     }
 }

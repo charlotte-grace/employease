@@ -2,101 +2,135 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EmployeeRequest;
-use App\Http\Resources\EmployeeResource;
 use App\Lib\Employee\Employee;
-use Illuminate\Http\JsonResponse;
+use App\Lib\Employee\EmployeeRequest;
+use App\Lib\Employee\EmployeeResource;
+use App\Lib\Employee\EmployeeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param EmployeeService $employeeService
+     */
+    public function __construct(public EmployeeService $employeeService)
+    {
+    }
+
+    /**
+     * @param Request $request
+     * @return AnonymousResourceCollection
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Employee::query();
+        $searchTerm = $request->input('search');
 
-        if ($request->has('search')) {
-            $searchTerm = $request->input('search');
-            $query->where(function ($query) use ($searchTerm) {
-                $query->where('first_name', 'like', "%$searchTerm%")
-                    ->orWhere('last_name', 'like', "%$searchTerm%")
-                    ->orWhere('email_address', 'like', "%$searchTerm%");
-            });
-        }
-        $employees = $query->paginate();
+        $employees = Employee::query()
+            ->when($searchTerm, function ($query, $searchTerm) {
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('first_name', 'like', "%$searchTerm%")
+                        ->orWhere('last_name', 'like', "%$searchTerm%")
+                        ->orWhere('email_address', 'like', "%$searchTerm%");
+                });
+            })
+            ->paginate();
 
         return EmployeeResource::collection($employees);
     }
 
     /**
-     * @param \App\Http\Requests\EmployeeRequest $request
-     * @param \App\Lib\Employee\Employee $employee
-     * @return \App\Http\Resources\EmployeeResource
+     * @param EmployeeRequest $request
+     * @return EmployeeResource|false
+     * @throws \Exception
      */
-    public function store(EmployeeRequest $request, Employee $employee): EmployeeResource
+    public function store(EmployeeRequest $request): bool|EmployeeResource
     {
-        $employee->create($request->safe()->except('skills'));
-        $employee->skills()->createMany($request->safe()->only('skills'));
+        $employeeData = $request->all();
+
+        try {
+            $employee = $this->employeeService->createEmployee($employeeData);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+
+            return false;
+        }
 
         return new EmployeeResource($employee);
     }
 
     /**
      * @param int $id
-     * @return \App\Http\Resources\EmployeeResource
+     * @return EmployeeResource|false
      */
-    public function show(int $id): EmployeeResource
+    public function show(int $id): bool|EmployeeResource
     {
-        $employee = Employee::findOrFail($id);
+        try {
+            $employee = $this->employeeService->findById($id);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+
+            return false;
+        }
 
         return new EmployeeResource($employee);
     }
 
     /**
-     * @param \App\Http\Requests\EmployeeRequest $request
-     * @param \App\Lib\Employee\Employee $employee
-     * @return \App\Http\Resources\EmployeeResource
+     * @param EmployeeRequest $request
+     * @param Employee $employee
+     * @return EmployeeResource|false
+     * @throws \Exception
      */
-    public function update(EmployeeRequest $request, Employee $employee): EmployeeResource
+    public function update(EmployeeRequest $request, Employee $employee): bool|EmployeeResource
     {
-        $employee->fill($request->safe()->except('skills'));
-        $employee->save();
+        $employeeData = $request->validated();
 
-        $employee->skills()->delete();
-        $employee->skills()->createMany($request->input('skills', []));
+        try {
+            $employee = $this->employeeService->updateEmployee($employeeData, $employee);
 
-        return new EmployeeResource($employee->load('skills'));
+            return new EmployeeResource($employee->load('skills'));
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+
+            return false;
+        }
     }
 
     /**
      * @param int $id
-     * @return \Illuminate\Http\Response;
+     * @return false|Response
      */
-    public function destroy(int $id): Response
+    public function destroy(int $id): Response|bool
     {
-        $employee = Employee::findOrFail($id);
-        $employee->delete();
+        try {
+            $employee = $this->employeeService->findById($id);
+            $employee->delete();
 
-        return response()->noContent();
+            return response()->noContent();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+
+            return false;
+        }
     }
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function search(Request $request): JsonResponse
+    public function search(Request $request): AnonymousResourceCollection
     {
         $searchTerm = $request->input('q');
-        $employees = Employee::where('first_name', 'LIKE', "%$searchTerm%")
-            ->orWhere('last_name', 'LIKE', "%$searchTerm%")
-            ->orWhere('email_address', 'LIKE', "%$searchTerm%")
+
+        $employees = Employee::query()
+            ->where('first_name', 'like', "%$searchTerm%")
+            ->orWhere('last_name', 'like', "%$searchTerm%")
+            ->orWhere('email_address', 'like', "%$searchTerm%")
             ->get();
 
-        return response()->json($employees);
+        return EmployeeResource::collection($employees);
     }
 }

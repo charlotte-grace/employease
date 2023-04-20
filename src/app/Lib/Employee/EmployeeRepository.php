@@ -2,6 +2,9 @@
 
 namespace App\Lib\Employee;
 
-class EmployeeRepository
+interface EmployeeRepository
 {
+    public function create(Employee $employee): Employee;
+    public function update(Employee $employee): Employee;
+    public function getById(int $id): ?Employee;
 }
