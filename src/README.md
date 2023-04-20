@@ -1,66 +1,63 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Employease (WIP)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Employease is a web application built using Laravel and Sail that allows you to perform CRUD (Create, Read, Update, Delete) operations on employees.
 
-## About Laravel
+## Project Status
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Employease is a project that was started only three days ago, and is therefore still a work in progress. Due to limited capacity I have not been able to focus fully on the implementation. So ,at this stage the application is incomplete and some features may be missing or not fully functional.
+## Installation (May or may not work!?)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Clone this repository
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+git clone git@github.com:charlotte-grace/employease.git
+```
 
-## Learning Laravel
+2. Navigate to the project directory
+```
+cd src
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Copy the .env.example file to .env
+```
+cp .env.example .env
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4. start the Docker containers
+```
+./vendor/bin/sail up -d
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. Install Laravel dependencies
+```
+./vendor/bin/sail composer install
+```
 
-## Laravel Sponsors
+6. Run database migrations
+```
+./vendor/bin/sail artisan migrate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+7. Visit http://localhost in your browser to see the application
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## At Least There Are Some  Tests Though...
 
-## Contributing
+Employease comes with a suite of automated tests to ensure that the application is functioning correctly. To run the tests, follow these steps:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+./vendor/bin/sail artisan test
+```
 
-## Code of Conduct
+The tests will automatically run and output the results to your terminal.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Sidenote: surprisingly they all pass... yaaay
+## You are never too old to f&$k Up and Learn a Lesson or Two
 
-## Security Vulnerabilities
+During the development of Employease, I learned an important lesson about managing workload and priorities. I took on multiple projects simultaneously while trying to secure employment, which resulted in a lack of focus and limited progress on each project.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+As a result, I realized the importance of prioritizing tasks and managing workload effectively. Moving forward, I will ensure that I allocate enough time and resources to each project to achieve desired outcomes.
 
-## License
+I hope that this lesson will be helpful to others who are juggling multiple responsibilities and trying to balance their workload effectively. By focusing on priorities and managing your time effectively, you can achieve success and avoid the pitfalls of spreading yourself too thin.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Word!
