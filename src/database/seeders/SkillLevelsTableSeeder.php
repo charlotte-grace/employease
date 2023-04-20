@@ -41,7 +41,7 @@ class SkillLevelsTableSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => $currentDate,
                 'updated_at' => $currentDate,
-            ]
+            ],
         ];
 
         foreach ($skillLevels as $level) {

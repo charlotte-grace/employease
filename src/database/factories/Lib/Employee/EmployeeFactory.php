@@ -1,13 +1,13 @@
 <?php
 
-namespace database\factories\Lib\Employee;
+namespace Database\Factories\Lib\Employee;
 
 use App\Lib\Employee\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<Employee>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Lib\Employee\Employee>
  */
 class EmployeeFactory extends Factory
 {
@@ -22,16 +22,16 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'employee_uuid' => Str::upper(substr($this->faker->uuid, 0, 6)),
-            'contact_number' => $this->faker->phoneNumber(),
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'email_address' => $this->faker->unique()->safeEmail(),
-            'street_address' => $this->faker->streetAddress(),
-            'city' => $this->faker->city(),
-            'postal_code' => $this->faker->postcode(),
-            'country' => $this->faker->country(),
-            'date_of_birth' => $this->faker->date('Y-m-d'),
+            'employee_uuid' => Str::upper(substr(fake()->uuid, 0, 6)),
+            'contact_number' => fake()->unique()->phoneNumber(),
+            'first_name' => fake()->name(),
+            'last_name' => fake()->lastName(),
+            'email_address' => fake()->unique()->safeEmail(),
+            'street_address' => fake()->streetAddress(),
+            'city' => fake()->city(),
+            'postal_code' => fake()->postcode(),
+            'country' => fake()->country(),
+            'date_of_birth' => fake()->date('Y-m-d'),
         ];
     }
 }
