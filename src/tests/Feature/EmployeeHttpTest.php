@@ -2,17 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\EmployeeController;
 use App\Lib\Employee\Employee;
-use App\Lib\Employee\EmployeeRequest;
 use App\Lib\Employee\EmployeeService;
 use App\Lib\Employee\EmployeeSkill;
-use App\Lib\Employee\SkillLevel;
 use Database\Seeders\SkillLevelsTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Mockery;
 
 /**
  * @internal
@@ -33,13 +29,6 @@ class EmployeeHttpTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->mockedEmployeeService =
-            Mockery::mock(EmployeeService::class);
-
-        app()->instance(
-            EmployeeService::class,
-            $this->mockedEmployeeService
-        );
     }
 
     /** @test
@@ -48,7 +37,7 @@ class EmployeeHttpTest extends TestCase
     public function itCanCreateEmployeeSuccessfully()
     {
         $employeeData = [
-            'employee_uuid' => 'QM-6838',
+
             'contact_number' => '630-935-5560',
             'first_name' => 'Prof. Martina Dare Jr.',
             'last_name' => 'Conroy',
@@ -60,39 +49,30 @@ class EmployeeHttpTest extends TestCase
             'date_of_birth' => '1987-01-10',
         ];
 
-        $skillLevel = SkillLevel::where('slug', 'expert')->firstOrFail();
-
         $skillData = [
             [
-                'skill_level_id' => $skillLevel->id,
+                'skill_level' => 'expert',
                 'skill_name' => 'PHP',
                 'years_experience' => 8,
             ],
             [
-                'skill_level_id' => $skillLevel->id,
+                'skill_level' => 'expert',
                 'skill_name' => 'JavaScript',
                 'years_experience' => 8,
             ],
             [
-                'skill_level_id' => $skillLevel->id,
+                'skill_level' => 'expert',
                 'skill_name' => 'MySql',
                 'years_experience' => 8,
             ],
         ];
 
-        $employeeData['skills'] = $skillData;
+        $data['skills'] = $skillData;
+        $data['personal'] = $employeeData;
 
-        $request = EmployeeRequest::create(
-            '/',
-            'POST',
-            $employeeData
-        );
-
-        $controller = new EmployeeController($this->mockedEmployeeService);
-        $response = $controller->store($request);
-
-        $this->assertFalse($response);
-        //        $this->assertJson(['data' => $employeeData]);
+        $response = $this->postJson('/api/employees', $data);
+        $response->assertSuccessful();
+        $this->assertJson($response->getContent());
 
     }
 

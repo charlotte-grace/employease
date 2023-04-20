@@ -23,15 +23,15 @@ class EmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'contact_number' => 'required|unique:employees,contact_number',
-            'email_address' => 'required|string|email|max:255|unique:employees,email_address',
-            'date_of_birth' => 'required|date',
-            'street_address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'postal_code' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
+            'personal.first_name' => 'required|string|max:255',
+            'personal.last_name' => 'required|string|max:255',
+            'personal.contact_number' => 'required|unique:employees,contact_number',
+            'personal.email_address' => 'required|string|email|max:255|unique:employees,email_address',
+            'personal.date_of_birth' => 'required|date',
+            'personal.street_address' => 'required|string|max:255',
+            'personal.city' => 'required|string|max:255',
+            'personal.postal_code' => 'required|string|max:255',
+            'personal.country' => 'required|string|max:255',
             'skills' => 'array',
             'skills.*.skill_level' => 'sometimes|nullable|exists:skill_levels,slug',
             'skills.*.skill_name' => 'sometimes|nullable',
@@ -45,19 +45,19 @@ class EmployeeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => 'First Name required',
-            'last_name.required' => 'Last Name required',
-            'contact_number.required' => 'Contact Number required',
-            'contact_number.unique' => 'Contact Number already exists',
-            'email_address.required' => 'Email required',
-            'email_address.email' => 'Email invalid',
-            'email_address.unique' => 'Email already already exists',
-            'date_of_birth.required' => 'Date of Birth required',
-            'date_of_birth.date' => 'Invalid date',
-            'street_address.required' => 'Street Address required',
-            'city.required' => 'City required',
-            'postal_code.required' => 'Postal Code required',
-            'country.required' => 'Country required',
+            'personal.first_name.required' => 'First Name required',
+            'personal.last_name.required' => 'Last Name required',
+            'personal.contact_number.required' => 'Contact Number required',
+            'personal.contact_number.unique' => 'Contact Number already exists',
+            'personal.email_address.required' => 'Email required',
+            'personal.email_address.email' => 'Email invalid',
+            'personal.email_address.unique' => 'Email already already exists',
+            'personal.date_of_birth.required' => 'Date of Birth required',
+            'personal.date_of_birth.date' => 'Invalid date',
+            'personal.street_address.required' => 'Street Address required',
+            'personal.city.required' => 'City required',
+            'personal.postal_code.required' => 'Postal Code required',
+            'personal.country.required' => 'Country required',
         ];
     }
 }

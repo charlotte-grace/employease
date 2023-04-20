@@ -6,12 +6,14 @@ use App\Lib\Employee\Employee;
 use App\Lib\Employee\EmployeeRequest;
 use App\Lib\Employee\EmployeeResource;
 use App\Lib\Employee\EmployeeService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-class EmployeeController extends Controller
+class EmployeeController extends ApiController
 {
     /**
      * @param EmployeeService $employeeService
@@ -21,99 +23,92 @@ class EmployeeController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return AnonymousResourceCollection
+     * @return JsonResponse
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
-        $searchTerm = $request->input('search');
+        try {
+            $employees = Employee::query()->simplePaginate();
 
-        $employees = Employee::query()
-            ->when($searchTerm, function ($query, $searchTerm) {
-                $query->where(function ($query) use ($searchTerm) {
-                    $query->where('first_name', 'like', "%$searchTerm%")
-                        ->orWhere('last_name', 'like', "%$searchTerm%")
-                        ->orWhere('email_address', 'like', "%$searchTerm%");
-                });
-            })
-            ->paginate();
+            return $this->sendResourceResponse(EmployeeResource::collection($employees));
+        } catch (Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
 
-        return EmployeeResource::collection($employees);
+            return $this->sendErrorResponse($e->getMessage());
+        }
     }
 
     /**
      * @param EmployeeRequest $request
-     * @return EmployeeResource|false
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function store(EmployeeRequest $request): bool|EmployeeResource
+    public function store(EmployeeRequest $request): JsonResponse
     {
-        $employeeData = $request->all();
-
         try {
-            $employee = $this->employeeService->createEmployee($employeeData);
-        } catch (\Exception $e) {
+            $employee = $this->employeeService->createEmployee($request->all());
+
+            return $this->sendResourceResponse(new EmployeeResource($employee));
+        } catch (Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
 
-            return false;
+            return $this->sendErrorResponse($e->getMessage());
         }
-
-        return new EmployeeResource($employee);
     }
 
     /**
      * @param int $id
-     * @return EmployeeResource|false
+     * @return JsonResponse
      */
-    public function show(int $id): bool|EmployeeResource
+    public function show(int $id): JsonResponse
     {
         try {
             $employee = $this->employeeService->findById($id);
-        } catch (\Exception $e) {
+
+            return $this->sendResourceResponse(new EmployeeResource($employee));
+        } catch (Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
 
-            return false;
+            return $this->sendErrorResponse($e->getMessage());
         }
-
-        return new EmployeeResource($employee);
     }
 
     /**
      * @param EmployeeRequest $request
      * @param Employee $employee
-     * @return EmployeeResource|false
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function update(EmployeeRequest $request, Employee $employee): bool|EmployeeResource
+    public function update(EmployeeRequest $request, Employee $employee): JsonResponse
     {
         $employeeData = $request->validated();
 
         try {
             $employee = $this->employeeService->updateEmployee($employeeData, $employee);
 
-            return new EmployeeResource($employee->load('skills'));
-        } catch (\Exception $e) {
+            return $this->sendResourceResponse(new EmployeeResource($employee->load('skills')));
+        } catch (Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
 
-            return false;
+            return $this->sendErrorResponse($e->getMessage());
         }
     }
 
     /**
      * @param int $id
-     * @return false|Response
+     * @return JsonResponse|Response
      */
-    public function destroy(int $id): Response|bool
+    public function destroy(int $id): Response|JsonResponse
     {
         try {
             $employee = $this->employeeService->findById($id);
             $employee->delete();
 
             return response()->noContent();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
 
-            return false;
+            return $this->sendErrorResponse($e->getMessage());
         }
     }
 

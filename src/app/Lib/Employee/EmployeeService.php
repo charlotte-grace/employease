@@ -2,13 +2,12 @@
 
 namespace App\Lib\Employee;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeService
 {
     /**
-     * Create a new employee with the given data.
-     *
      * @param array $employeeData
      * @return Employee
      * @throws \Exception
@@ -18,16 +17,28 @@ class EmployeeService
         DB::beginTransaction();
 
         try {
+            $employee = new Employee($employeeData['personal']);
+            $employee->save();
+
             $skills = $employeeData['skills'] ?? null;
-            unset($employeeData['skills']);
 
-            $employee = Employee::create($employeeData);
+            $employeeSkills = new Collection();
 
-            if (!is_null($skills)) {
-                $employee->setSkills($skills);
+            foreach ($skills as $skill) {
+                $skillLevel = SkillLevel::getBySlug($skill['skill_level']);
+
+                $employeeSkills->push(new EmployeeSkill([
+                    'employee_id' => $employee->getkey(),
+                    'skill_name' => $skill['skill_name'],
+                    'years_experience' => $skill['years_experience'],
+                    'skill_level_id' => $skillLevel->id,
+                ]));
             }
 
-            $employee->save();
+            if (!is_null($skills)) {
+                $employee->setSkills($employeeSkills);
+            }
+
             DB::commit();
 
             return $employee;
@@ -38,8 +49,6 @@ class EmployeeService
     }
 
     /**
-     * Update an existing employee with the given data.
-     *
      * @param array $employeeData
      * @param Employee $employee
      * @return Employee
@@ -50,14 +59,14 @@ class EmployeeService
         DB::beginTransaction();
 
         try {
+            $employee = $this->findByUuid($employeeData['personal']['employee_uuid']);
             $skills = $employeeData['skills'] ?? null;
-            unset($employeeData['skills']);
 
-            if ($skills) {
+            $employee->update($employeeData['personal']);
+
+            if (!is_null($skills)) {
                 $employee->setSkills($skills);
             }
-
-            $employee->update($employeeData);
 
             DB::commit();
 
@@ -69,13 +78,20 @@ class EmployeeService
     }
 
     /**
-     * Find an employee by ID.
-     *
      * @param int $id
      * @return Employee|null
      */
     public function findById(int $id): ?Employee
     {
         return Employee::find($id);
+    }
+
+    /**
+     * @param int $id
+     * @return Employee|null
+     */
+    public function findByUuid(int $uuid): ?Employee
+    {
+        return Employee::where('employee_uuid', $uuid)->first() ?? new Employee();
     }
 }

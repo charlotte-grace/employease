@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Employee extends Model
@@ -23,7 +24,6 @@ class Employee extends Model
      * @var string[]
      */
     protected $fillable = [
-        'employee_uuid',
         'first_name',
         'last_name',
         'contact_number',
@@ -34,10 +34,6 @@ class Employee extends Model
         'postal_code',
         'country',
     ];
-    /**
-     * @var mixed|string
-     */
-    private mixed $employee_uuid;
 
     /**
      * Boot the model.
@@ -62,24 +58,28 @@ class Employee extends Model
      */
     public function skills(): HasMany
     {
-        return $this->hasMany(EmployeeSkill::class);
+        return $this->hasMany(EmployeeSkill::class, 'employee_id');
     }
 
     /**
-     * Set the skills of the employee to the provided collection.
-     *
-     * @param array $skills The array of skills to set.
+     * @param Collection $skills
      * @return $this
      */
-    public function setSkills(array $skills): self
+    public function setSkills(Collection $skills): self
     {
-        $skillNames = collect($skills)->pluck('skill_name')->toArray();
-        $skillsToDelete = $this->getSkills()->whereNotIn('skill_name', $skillNames);
-        $skillsToUpsert = $skills;
 
-        $skillsToDelete->each(fn (EmployeeSkill $skill) => $skill->delete());
-        $this->skills()->upsert($skillsToUpsert, ['employee_id', 'skill_name']);
+        // Delete the employees existing skills.
+        $this->getSkills()->each(function (EmployeeSkill $skill) {
+            $skill->delete();
+        });
+        Log::debug(print_r($skills, true));
+        //        dd($skills);
+        // Create new skill records for the updated list of skills.
+        $skills->each(function ($skill) {
+            $this->skills()->save($skill);
+        });
 
+        // Return the updated instance of the object.
         return $this;
     }
 

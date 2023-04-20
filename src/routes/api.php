@@ -18,12 +18,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::name('employees')->prefix('/employees')->group(function () {
-    Route::get('/', [App\Http\Controllers\EmployeeController::class, 'index'])->name('index');
-    Route::post('/', [App\Http\Controllers\EmployeeController::class, 'store'])->name('store');
-    Route::get('/{id}', [App\Http\Controllers\EmployeeController::class, 'show'])->name('show');
-    Route::put('/{id}', [App\Http\Controllers\EmployeeController::class, 'update'])->name('update');
+//Route::name('employees')->prefix('/employees')->group(function () {
+//    Route::get('/', [App\Http\Controllers\EmployeeController::class, 'index'])->name('index');
+//    Route::post('/', [App\Http\Controllers\EmployeeController::class, 'store'])->name('store');
+//    Route::get('/{id}', [App\Http\Controllers\EmployeeController::class, 'show'])->name('show');
+//    Route::put('/{id}', [App\Http\Controllers\EmployeeController::class, 'update'])->name('update');
+//
+//    Route::delete('/{id}', [App\Http\Controllers\EmployeeController::class, 'destroy'])->name('destroy');
+//    //    Route::get('/search', [App\Http\Controllers\EmployeeController::class, 'search'])->name('search');
+//});
 
-    Route::delete('/{id}', [App\Http\Controllers\EmployeeController::class, 'destroy'])->name('destroy');
-    //    Route::get('/search', [App\Http\Controllers\EmployeeController::class, 'search'])->name('search');
-});
+Route::get('/employees', [App\Http\Controllers\EmployeeController::class, 'index'])->name('index');
+Route::post('/employees', [App\Http\Controllers\EmployeeController::class, 'store'])->name('store');
+Route::get('/employees/{employee}', [App\Http\Controllers\EmployeeController::class, 'show'])->name('show');
+Route::put('/employees/{employee}', [App\Http\Controllers\EmployeeController::class, 'update'])->name('update');
+Route::delete('/employees/{employee}', [App\Http\Controllers\EmployeeController::class, 'destroy'])->name('destroy');
