@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Employee extends Model
@@ -67,25 +66,20 @@ class Employee extends Model
      */
     public function setSkills(Collection $skills): self
     {
-
         // Delete the employees existing skills.
         $this->getSkills()->each(function (EmployeeSkill $skill) {
             $skill->delete();
         });
-        Log::debug(print_r($skills, true));
-        //        dd($skills);
+
         // Create new skill records for the updated list of skills.
         $skills->each(function ($skill) {
             $this->skills()->save($skill);
         });
 
-        // Return the updated instance of the object.
         return $this;
     }
 
     /**
-     * Get the employee's skills.
-     *
      * @return Collection<EmployeeSkill>
      */
     public function getSkills(): Collection

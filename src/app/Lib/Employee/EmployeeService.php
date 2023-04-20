@@ -2,6 +2,7 @@
 
 namespace App\Lib\Employee;
 
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -10,7 +11,7 @@ class EmployeeService
     /**
      * @param array $employeeData
      * @return Employee
-     * @throws \Exception
+     * @throws Exception
      */
     public function createEmployee(array $employeeData): Employee
     {
@@ -42,7 +43,7 @@ class EmployeeService
             DB::commit();
 
             return $employee;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             throw $e;
         }
@@ -52,7 +53,7 @@ class EmployeeService
      * @param array $employeeData
      * @param Employee $employee
      * @return Employee
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateEmployee(array $employeeData, Employee $employee): Employee
     {
@@ -71,7 +72,7 @@ class EmployeeService
             DB::commit();
 
             return $employee;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             throw $e;
         }
@@ -87,7 +88,7 @@ class EmployeeService
     }
 
     /**
-     * @param int $id
+     * @param int $uuid
      * @return Employee|null
      */
     public function findByUuid(int $uuid): ?Employee
